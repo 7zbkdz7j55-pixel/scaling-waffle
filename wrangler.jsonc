@@ -1,0 +1,67 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "biddesk",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // Model tiering (spec Volume III). Opus for judgment agents, Sonnet for
+    // high-volume extraction. Override per-environment without touching code.
+    "SHREDDER_MODEL": "claude-sonnet-5",
+    "GATEKEEPER_MODEL": "claude-opus-5",
+    // Ceiling on model calls per shred so a pathological package can't run away.
+    "MAX_SHRED_CHUNKS": "400"
+  },
+  // ANTHROPIC_API_KEY is a secret: `wrangler secret put ANTHROPIC_API_KEY`.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "biddesk",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "DOCS",
+      "bucket_name": "biddesk-docs"
+    }
+  ],
+  "vectorize": [
+    {
+      "binding": "SOL_INDEX",
+      "index_name": "biddesk-solicitations"
+    },
+    {
+      "binding": "CORPUS_INDEX",
+      "index_name": "biddesk-corpus"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "BID_ROOM",
+        "class_name": "BidRoom"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["BidRoom"]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "biddesk-foreman",
+      "binding": "FOREMAN",
+      "class_name": "Foreman"
+    }
+  ]
+}
