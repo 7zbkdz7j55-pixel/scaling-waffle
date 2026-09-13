@@ -1,0 +1,30 @@
+# forge.py and the builds it hosts.
+#
+# Install everything for the full app, or just the first two groups to run the
+# analytics + workspace half — forge.py skips any build whose imports fail.
+
+# --- orchestrator (forge.py) ------------------------------------------------
+anthropic>=0.40
+
+# --- analytics build (data_analytics_server.py, spawned over stdio) ---------
+# Hard requirement: this server is the migrated v2 file and imports
+# mcp.server.mcpserver, which does not exist on mcp 1.x. See MIGRATION.md.
+mcp>=2.0
+duckdb>=1.0
+pandas>=2.0
+httpx>=0.27
+matplotlib>=3.8
+openpyxl>=3.1          # only needed for .xlsx/.xls sources
+
+# --- browser build (browser_agent.py) ---------------------------------------
+# Also run: playwright install chromium
+playwright>=1.44
+
+# --- RAG build (rag.py) -----------------------------------------------------
+# Heavy (pulls in torch). Drop these two lines if you are not using rag.py.
+sentence-transformers>=3.0
+numpy>=1.24
+
+# --- coding sub-agent (coding_agent.py) -------------------------------------
+# Also run: npm install -g @anthropic-ai/claude-code
+claude-agent-sdk>=0.1

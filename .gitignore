@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# The shared workspace is runtime state, not source. data/ is the analytics
+# server's default folder when it runs standalone (Claude Desktop / Inspector);
+# under forge.py it is redirected to workspace/data.
+workspace/
+data/
+
+# The coding sub-agent's resume token.
+.claude_agent_session
