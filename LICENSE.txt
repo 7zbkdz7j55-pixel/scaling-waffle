@@ -1,0 +1,89 @@
+================================================================
+ FENDRISK SECURITY PREFLIGHT — FREE EDITION
+ LICENCE
+ © 2026 B2 Stealthy Solutions. All rights reserved.
+================================================================
+
+Fendrisk Security Preflight is distributed free of charge. It is
+not open source, and it is not placed in the public domain. Your
+rights to it are set out below.
+
+By downloading, opening, or using Fendrisk Security Preflight
+("the Software") you agree to these terms.
+
+1. GRANT OF LICENCE
+   You are granted a perpetual, worldwide, non-exclusive,
+   non-transferable, royalty-free licence to use the Software for
+   your own purposes, personal or commercial, on any number of
+   devices you personally control.
+
+2. PERMITTED USE
+   a. Use the Software to assess your own applications, and the
+      applications of clients you personally advise.
+   b. Use the output (your assessments and exported reports) in
+      your own work and client deliverables, including
+      commercially, without attribution or fee.
+   c. Keep private copies for your own use.
+   d. Modify the file for your own private use. Modified copies
+      remain subject to this licence, and support is limited to
+      the unmodified original.
+
+3. RESTRICTIONS
+   Free to use is not free to redistribute. You may NOT:
+   a. Resell, sublicense, rent, or lease the Software or any
+      modified version of it.
+   b. Redistribute the Software, in original or modified form —
+      including uploading it to file-sharing services, public
+      repositories, app stores, or template marketplaces.
+      Point people to the official download instead.
+   c. Re-host the Software on a public or client-accessible site
+      under your own branding, or offer it to third parties as
+      your own service or product.
+   d. Include the Software in any paid or free product,
+      template, course, bundle, or collection.
+   e. Remove, obscure, or alter any copyright or branding notice
+      in the Software, including the notices in the exported
+      report.
+   f. Use the Software to train or evaluate a machine-learning
+      model, or to create a competing or substantially similar
+      product.
+
+4. NATURE OF THE SOFTWARE — READ THIS
+   The Software is a structured self-assessment aid. It does not
+   scan code, test applications, or independently verify any
+   statement the user makes. All results reflect the user's own
+   judgment and may be incorrect or incomplete.
+
+   The Software is NOT a security audit, penetration test,
+   vulnerability scan, or compliance certification, and its
+   output must not be represented as any of those to any third
+   party, customer, auditor, or regulator.
+
+5. NO WARRANTY
+   The Software is provided "AS IS", without warranty of any
+   kind, express or implied, including but not limited to the
+   warranties of merchantability, fitness for a particular
+   purpose, and non-infringement. B2 Stealthy Solutions does not
+   warrant that use of the Software will identify every security
+   issue, or any particular security issue, in any application.
+
+6. LIMITATION OF LIABILITY
+   To the maximum extent permitted by law, in no event shall B2
+   Stealthy Solutions be liable for any claim, damages, security
+   incident, data breach, lost profits, or other liability,
+   whether in an action of contract, tort, or otherwise, arising
+   from or in connection with the Software, its use, or reliance
+   on its output. Because the Software is supplied free of
+   charge, no refund or monetary remedy is available.
+
+7. TERMINATION
+   This licence terminates automatically if you breach any of
+   its terms. On termination you must destroy all copies of the
+   Software in your possession.
+
+8. GOVERNING LAW
+   This licence is governed by the laws of the jurisdiction in
+   which B2 Stealthy Solutions is established, without regard to
+   conflict-of-law provisions.
+
+Questions: support@b2stealthysolutions.com

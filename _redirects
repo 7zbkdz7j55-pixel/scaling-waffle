@@ -1,0 +1,6 @@
+# Netlify _redirects — evaluated before netlify.toml redirects.
+/index.htm    /            301!
+/preflight    /            301!
+/app          /            301!
+# Unmatched paths render the styled 404 and keep the 404 status code.
+/*            /404.html    404
