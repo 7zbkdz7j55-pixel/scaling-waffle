@@ -139,6 +139,12 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .btn-primary:hover{background:var(--amber-dim);border-color:var(--amber-dim)}
 
 /* ── FOOTER ── */
+.nextstep{background:var(--surface);border:1px solid var(--amber-dim);border-radius:var(--radius);padding:18px 20px;margin-top:26px;font-size:14px;color:var(--text-muted);line-height:1.65}
+.nextstep strong{color:var(--amber);font-size:11px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:7px}
+.nextstep code{font-family:var(--mono);font-size:12px;background:var(--surface-raised);padding:1px 5px;border-radius:3px;color:var(--amber)}
+.nextlink{display:inline-flex;align-items:center;min-height:44px;margin-top:10px;color:var(--amber);font-family:var(--mono);font-size:13px;letter-spacing:.04em;text-decoration:none;border-bottom:1px solid var(--amber-dim)}
+.nextlink:hover{color:var(--text)}
+.nextlink:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .footer{text-align:center;padding:28px 0 16px;border-top:1px solid var(--border);margin-top:28px}
 .footer p{font-size:12px;color:var(--text-dim);line-height:1.6}
 .footer .brand{font-family:var(--mono);color:var(--amber-dim);letter-spacing:0.04em}
@@ -172,6 +178,9 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
   .how-toggle{font-size:15px}
   .check-fix{font-size:15px}
   .footer p{font-size:14px}
+  .nextstep{font-size:16px}
+  .nextstep code{font-size:14px}
+  .nextlink{font-size:15px}
   .btn{font-size:14px}
   .summary-bar{font-size:14px}
   .modal pre{font-size:12px}
@@ -187,7 +196,7 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 }
 @media print{
   body{background:#fff;color:#111}
-  .disclaimer,.actions,.check-controls,.how-toggle,.toast,.modal-overlay{display:none!important}
+  .disclaimer,.actions,.check-controls,.how-toggle,.toast,.modal-overlay,.nextstep{display:none!important}
   .category.collapsed .category-body{display:block!important}
   .category-header{background:#f5f5f5;border-color:#ccc;color:#111}
   .category-header h2{color:#111}
@@ -248,6 +257,17 @@ button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
     <button class="btn" data-act="reset" aria-label="Reset all checks">Reset All</button>
     <button class="btn" data-act="expand" aria-label="Expand all categories">Expand All</button>
     <button class="btn" data-act="collapse" aria-label="Collapse all categories">Collapse All</button>
+  </div>
+
+  <div class="nextstep">
+    <strong>The secrets checks above ask you to look</strong>
+    Four of these 29 checks come down to one question: is a key that should be
+    secret sitting in your frontend bundle? <em>Fendrisk Secret Sweep</em> answers it
+    instead of asking. Paste your bundle or <code>.env</code> and it finds exposed
+    credentials, decodes JWTs to catch Supabase <code>service_role</code> keys, and marks the
+    keys that are meant to be public so you don't rotate the wrong one. It runs on
+    your device with no network requests, exactly like this page.
+    <a class="nextlink" href="https://promptforceai.gumroad.com/l/secret-sweep" rel="noopener">See Fendrisk Secret Sweep &rarr;</a>
   </div>
 
   <div class="footer">
