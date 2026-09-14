@@ -41,30 +41,63 @@ run. A server that fails to start degrades to a warning rather than taking down 
 
 ## What's in this repo
 
-`forge.py`, `data_analytics_server.py` and the tests. The three in-process builds —
-`browser_agent.py`, `rag.py` and `coding_agent.py` — are **not** included yet. Forge
-detects that at startup and runs without them:
+All four builds, plus the orchestrator and its tests. With everything installed a run
+starts clean:
 
 ```
-[warn] browser tools unavailable: ModuleNotFoundError: No module named 'browser_agent'
-[warn] RAG tools unavailable (ModuleNotFoundError: No module named 'rag') …
-[warn] coding sub-agent unavailable: ModuleNotFoundError: No module named 'claude_agent_sdk'
 [mcp] analytics: 5 tools (list_sources, describe_source, run_sql, load_api, make_chart)
-[forge] 8 tools ready | model claude-sonnet-5 | workspace …/workspace
+[forge] 18 tools ready | model claude-sonnet-5 | workspace …/workspace
 ```
 
-Drop the three files alongside `forge.py` and their tools appear on the next run, no
-code changes. Until then the analytics and workspace halves are fully usable.
+Each build also runs on its own:
+
+```bash
+python browser_agent.py "what is on example.com"
+python rag.py ingest ./workspace/docs && python rag.py search "pricing"
+python coding_agent.py "add a --verbose flag and a test for it"
+python data_analytics_server.py          # or register it with Claude Desktop
+```
+
+Drop any build's file out of the folder and forge skips it with a warning and keeps the
+rest — with none of the three in-process builds present it still runs the analytics and
+workspace halves on 8 tools.
+
+### A note on the RAG embedder
+
+`rag.py` computes true semantic embeddings with sentence-transformers when it can. When
+that package is missing **or its model cannot be downloaded**, it falls back to a
+feature-hashed bag-of-words index and says so on every load:
+
+```
+[rag] sentence-transformers not installed — falling back to LEXICAL search
+      (keyword overlap only, no paraphrase matching).
+```
+
+The fallback is lexical, not semantic: it matches shared wording and misses paraphrase.
+It exists so the build stays usable offline and without torch — don't mistake its
+results for semantic search. `RAG_FORCE_HASHING=1` selects it deliberately.
 
 ## Tests
 
 ```bash
-python test_forge.py
+python test_forge.py     # the orchestrator: 45 checks
+python test_builds.py    # the three in-process builds: 92 checks
 ```
 
-No API key needed — the agent loop runs against a stub client. The MCP section spawns
-the real analytics server over stdio and skips itself if duckdb/pandas/matplotlib are
-missing, the same way `forge.py` degrades.
+No API key and no network needed — the agent loop runs against a stub client. Sections
+skip rather than fail when a dependency is absent, the same way `forge.py` degrades.
+`test_forge.py` spawns the real analytics server over stdio; `test_builds.py` drives
+real Chromium against a temporary site on a loopback port. If Playwright's bundled
+browser doesn't match your installed `playwright`, point the test at one you have:
+
+```bash
+FORGE_TEST_CHROMIUM=/path/to/chrome python test_builds.py
+```
+
+One gap worth stating plainly: the sentence-transformers path is covered against a
+stand-in model (dimensions, normalisation, dtype, and a real `KnowledgeBase` search),
+because downloading the actual model needs network. The lexical fallback is tested for
+real end to end.
 
 ## Usage
 
@@ -119,6 +152,15 @@ in SQL is the difference between an answer and a guess.
 - **`load_api` and the browser both pull untrusted text into the loop.** A scraped page
   can contain text aimed at steering the model. The analytics server's read-only default
   is doing real work here; leave `ALLOW_WRITES` off.
+- **The coding sub-agent runs on an allowlist, not a bypass.** Nobody is there to answer
+  a permission prompt, so `coding_agent.py` pre-approves a named set of tools
+  (`Read/Write/Edit/Glob/Grep/Bash/TodoWrite/NotebookEdit`) under `acceptEdits` rather
+  than `bypassPermissions`, and scopes them to the project folder. That matters more
+  once a scraped page is in the same conversation: the surface stays auditable in one
+  place. Widen it with `CODE_ALLOWED_TOOLS` only if you mean to.
+- **Element indices go stale on purpose.** `get_page_content` re-stamps
+  `data-forge-idx` on every read, and any click or navigation clears them, so a stale
+  number gets a clear error instead of clicking the wrong thing.
 - **Long `--chat` sessions grow the message list unboundedly.** If you're running dozens
   of turns, add trimming or start a fresh session.
 
