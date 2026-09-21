@@ -17,6 +17,35 @@ Two things follow from that. Your server keeps working unchanged in Claude Deskt
 this is a second client, not a fork. And adding any other MCP server is one entry in
 `MCP_SERVERS`; its tools appear automatically, no code changes.
 
+## Hosting — this is not a web product
+
+This repository is a **local CLI orchestrator**. It has no HTTP entrypoint
+(`app.py`, `index.py`, `server.py`, `wsgi.py`, `asgi.py`). It is not the B2
+storefront and it is not a Vercel app.
+
+The live catalog is [https://www.b2stealthysolutions.com/](https://www.b2stealthysolutions.com/)
+(repo `b2-store`). Support: support@b2stealthysolutions.com.
+
+A Vercel project named `scaling-waffle` was attached to this repo. Production
+deploy `dpl_CpyEaR8dyvyFh75qqTw5dNQV7HJY` failed with:
+
+| Field | Value |
+| --- | --- |
+| Class | framework / agent-caused |
+| Code | `PYTHON_ENTRYPOINT_NOT_FOUND` |
+| Why | Vercel inferred a Python web runtime from `requirements.txt` |
+| Public alias | `https://scaling-waffle.vercel.app/` → 404 `DEPLOYMENT_NOT_FOUND` |
+
+**Do not add a dummy `app.py` to silence that error.** That would ship a fake
+web product and hide the class. Retrying the same deploy without a config
+change will fail the same way.
+
+`vercel.json` in this repo disables Git deployments so the failure cannot
+silently recur. Unlinking the Vercel project is a dashboard step (production
+routing) and is intentionally not done in the same change.
+
+See GitHub issue #2.
+
 ## Setup
 
 ```bash
