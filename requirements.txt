@@ -18,7 +18,7 @@ openpyxl>=3.1          # only needed for .xlsx/.xls sources
 
 # --- browser build (browser_agent.py) ---------------------------------------
 # Also run: playwright install chromium
-playwright>=1.44
+playwright>=1.63.0
 
 # --- RAG build (rag.py) -----------------------------------------------------
 # Heavy (pulls in torch). Drop these two lines if you are not using rag.py.
