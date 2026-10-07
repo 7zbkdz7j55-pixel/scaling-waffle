@@ -13,7 +13,7 @@ mcp>=2.0
 duckdb>=1.0
 pandas>=3.0.6
 httpx>=0.27
-matplotlib>=3.8
+matplotlib>=3.11.2
 openpyxl>=3.1.5          # only needed for .xlsx/.xls sources
 
 # --- browser build (browser_agent.py) ---------------------------------------
