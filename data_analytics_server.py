@@ -37,6 +37,7 @@ Tools exposed to Claude
 import io
 import os
 import re
+import sys
 from pathlib import Path
 
 import duckdb
@@ -66,7 +67,20 @@ FILE_READERS = {
     ".ndjson": "read_json_auto",
 }
 
+
+def _sql_str(value: str) -> str:
+    return "'" + value.replace("'", "''") + "'"
+
+
+# Glob metacharacters would make a view read every file matching the pattern.
+GLOB_CHARS = set("*?[]{}")
+
 con = duckdb.connect(database=":memory:")  # single in-process analytics database
+# Confine the engine to the data folder and lock that in, so no query can re-enable
+# external access or widen the allowed directories afterwards.
+con.execute(f"SET allowed_directories = [{_sql_str(str(DATA_DIR.resolve()))}]")
+con.execute("SET enable_external_access = false")
+con.execute("SET lock_configuration = true")
 
 mcp = MCPServer(
     "Data Analytics",
@@ -105,12 +119,16 @@ def _register_file_sources() -> list[str]:
             continue
         ext = path.suffix.lower()
         view = _safe_ident(path.stem)
+        if ext in FILE_READERS and GLOB_CHARS & set(path.name):
+            print(f"[warn] skipped {path.name}: names with * ? [ ] {{ }} are not supported",
+                  file=sys.stderr)
+            continue
         try:
             if ext in FILE_READERS:
                 reader = FILE_READERS[ext]
                 con.execute(
                     f'CREATE OR REPLACE VIEW "{view}" AS '
-                    f"SELECT * FROM {reader}('{path.as_posix()}')"
+                    f"SELECT * FROM {reader}({_sql_str(path.as_posix())})"
                 )
                 registered.append(view)
             elif ext in (".xlsx", ".xls"):
@@ -125,15 +143,13 @@ def _register_file_sources() -> list[str]:
 
 
 def _is_read_only(query: str) -> bool:
-    """True if the query only reads data (SELECT/WITH/DESCRIBE/etc.)."""
-    stripped = re.sub(r"^(\s*--[^\n]*\n)+", "", query.lstrip()).lstrip()
-    return bool(
-        re.match(
-            r"(SELECT|WITH|FROM|DESCRIBE|DESC|SHOW|EXPLAIN|PRAGMA|SUMMARIZE)\b",
-            stripped,
-            re.IGNORECASE,
-        )
-    )
+    """True only for a single SELECT. Parsed by DuckDB, because a prefix match lets
+    'SELECT 1; DROP TABLE x' through and EXPLAIN ANALYZE executes its inner statement."""
+    try:
+        statements = duckdb.extract_statements(query)
+    except duckdb.Error:
+        return False
+    return len(statements) == 1 and statements[0].type == duckdb.StatementType.SELECT
 
 
 def _df_to_text(df: pd.DataFrame) -> str:
@@ -201,8 +217,8 @@ def run_sql(query: str) -> str:
     _register_file_sources()
     if not ALLOW_WRITES and not _is_read_only(query):
         return (
-            "Refused: this server runs read-only queries by default. Use a SELECT/WITH "
-            "query, or set the ALLOW_WRITES=1 environment variable to enable writes."
+            "Refused: by default only a single SELECT query runs. PRAGMA, EXPLAIN, SET, "
+            "and multi-statement queries are refused. Set ALLOW_WRITES=1 to allow them."
         )
     try:
         df = con.execute(query).fetchdf()
@@ -264,7 +280,7 @@ def make_chart(sql: str, chart_type: str = "bar", x: str = "", y: str = "",
     - y: column for the y-axis (not used for 'hist'). Defaults to the 2nd column.
     - title: optional chart title."""
     if not ALLOW_WRITES and not _is_read_only(sql):
-        raise ValueError("make_chart only runs read-only SELECT queries.")
+        raise ValueError("make_chart only runs a single read-only SELECT query.")
     _register_file_sources()
     df = con.execute(sql).fetchdf()
     if df.empty:

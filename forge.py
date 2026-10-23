@@ -51,6 +51,7 @@ import argparse
 import asyncio
 import base64
 import os
+import re
 import sys
 import traceback
 from contextlib import AsyncExitStack
@@ -80,6 +81,9 @@ for _d in (DATA_DIR, DOCS_DIR, PROJECT_DIR, NOTES_DIR):
 # Caps so one fat tool result can't blow the context window.
 MAX_TOOL_CHARS = int(os.environ.get("MAX_TOOL_CHARS", "8000"))
 MAX_SUBAGENT_CHARS = 6000
+
+# Names reach SQL views and shell-visible paths, so keep them to a plain charset.
+SAFE_FILENAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}")
 
 
 def _clip(text: str, limit: int = MAX_TOOL_CHARS) -> str:
@@ -408,7 +412,11 @@ class LocalTools:
         # workspace
         if name == "save_artifact":
             folder = {"data": DATA_DIR, "docs": DOCS_DIR, "notes": NOTES_DIR}[args["folder"]]
-            target = folder / Path(args["filename"]).name  # no path escapes
+            filename = Path(args["filename"]).name  # basename only: "../x.csv" saves as "x.csv"
+            if not SAFE_FILENAME.fullmatch(filename):
+                return ("Refused: filenames may use only letters, digits, '.', '_' and '-', "
+                        "and must start with a letter or digit.")
+            target = folder / filename
             target.write_text(args["content"], encoding="utf-8")
             extra = ""
             if args["folder"] == "data":

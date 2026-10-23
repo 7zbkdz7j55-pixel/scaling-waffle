@@ -227,6 +227,11 @@ def test_dispatch_guard():
                   not (HERE.parent / "escape.txt").exists()
                   and (forge.NOTES_DIR / "escape.txt").exists())
 
+            out = await local.call("save_artifact", {
+                "folder": "data", "filename": "x'); DROP TABLE t; --.csv", "content": "x"})
+            check("save_artifact refuses SQL metacharacters in names",
+                  "Refused" in str(out) and not list(forge.DATA_DIR.glob("x'*")))
+
             out = await local.call("list_workspace", {})
             check("list_workspace lists folders", "notes" in str(out) and "data" in str(out))
 

@@ -109,8 +109,9 @@ results for semantic search. `RAG_FORCE_HASHING=1` selects it deliberately.
 ## Tests
 
 ```bash
-python test_forge.py     # the orchestrator: 45 checks
+python test_forge.py     # the orchestrator: 46 checks
 python test_builds.py    # the three in-process builds: 92 checks
+python test_analytics_security.py  # analytics sandbox and SQL gate: 28 checks
 ```
 
 No API key and no network needed — the agent loop runs against a stub client. Sections
@@ -179,8 +180,10 @@ in SQL is the difference between an answer and a guess.
   `workspace/project/.claude_agent_session` and resumes across runs. Run that folder as a
   git repo and commit between tasks — resume restores the conversation, not your files.
 - **`load_api` and the browser both pull untrusted text into the loop.** A scraped page
-  can contain text aimed at steering the model. The analytics server's read-only default
-  is doing real work here; leave `ALLOW_WRITES` off.
+  can contain text aimed at steering the model. The analytics server confines DuckDB to
+  the data folder with external access disabled and locked, and by default runs only a
+  single `SELECT`. Leave `ALLOW_WRITES` off. The file sandbox holds even with it on, but
+  writes then reach the in-memory database.
 - **The coding sub-agent runs on an allowlist, not a bypass.** Nobody is there to answer
   a permission prompt, so `coding_agent.py` pre-approves a named set of tools
   (`Read/Write/Edit/Glob/Grep/Bash/TodoWrite/NotebookEdit`) under `acceptEdits` rather
