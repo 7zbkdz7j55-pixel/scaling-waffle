@@ -86,6 +86,19 @@ def main():
           out.startswith("SQL error") and "Permission" in out, out[:60])
 
     fresh_keep()
+    out = das.run_sql(f"SELECT * FROM read_text('{das.DATA_DIR}/../secrets/fake_env')")
+    check("'..' out of the data folder is refused", "sk-ant-REDACTED" not in out, out[:60])
+
+    fresh_keep()
+    out = das.run_sql("SELECT * FROM read_text('/proc/self/environ')")
+    check("the process environment cannot be read as a file", "PATH=" not in out, out[:60])
+
+    fresh_keep()
+    out = das.run_sql("SELECT getenv('HOME') AS h")
+    check("environment variables are not reachable from SQL", "/root" not in out
+          and "/home" not in out, out[:60])
+
+    fresh_keep()
     out = das.run_sql("SELECT 1; DROP TABLE keep")
     check("stacked DROP after a SELECT is refused", "keep" in tables() and "Refused" in out,
           out[:60])
@@ -150,6 +163,14 @@ def main():
         das.httpx.get = real_get
     check("load_api loads into a table under the lock", "Loaded 2 rows" in msg, msg[:60])
     check("loaded api table is queryable", "3" in das.run_sql("SELECT sum(n) AS s FROM api_rows"))
+
+    rel = os.getcwd()
+    check("DATA_DIR is absolute, so a later chdir cannot break reads",
+          Path(das.DATA_DIR).is_absolute())
+    os.chdir(str(work))
+    check("file views still read after the working directory changes",
+          "30" in das.run_sql("SELECT sum(amt) FROM sales"))
+    os.chdir(rel)
 
     chart = das.make_chart("SELECT id, amt FROM sales", chart_type="bar")
     check("make_chart renders under the lock", chart is not None)

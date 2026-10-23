@@ -53,7 +53,7 @@ from mcp.server.mcpserver import MCPServer, Image
 # --------------------------------------------------------------------------- #
 # Configuration
 # --------------------------------------------------------------------------- #
-DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).parent / "data")).expanduser()
+DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).parent / "data")).expanduser().resolve()
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 ALLOW_WRITES = os.environ.get("ALLOW_WRITES", "").lower() in ("1", "true", "yes")
@@ -78,7 +78,7 @@ GLOB_CHARS = set("*?[]{}")
 con = duckdb.connect(database=":memory:")  # single in-process analytics database
 # Confine the engine to the data folder and lock that in, so no query can re-enable
 # external access or widen the allowed directories afterwards.
-con.execute(f"SET allowed_directories = [{_sql_str(str(DATA_DIR.resolve()))}]")
+con.execute(f"SET allowed_directories = [{_sql_str(str(DATA_DIR))}]")
 con.execute("SET enable_external_access = false")
 con.execute("SET lock_configuration = true")
 

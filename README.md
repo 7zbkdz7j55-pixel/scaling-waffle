@@ -111,7 +111,7 @@ results for semantic search. `RAG_FORCE_HASHING=1` selects it deliberately.
 ```bash
 python test_forge.py     # the orchestrator: 46 checks
 python test_builds.py    # the three in-process builds: 92 checks
-python test_analytics_security.py  # analytics sandbox and SQL gate: 28 checks
+python test_analytics_security.py  # analytics sandbox and SQL gate: 33 checks
 ```
 
 No API key and no network needed — the agent loop runs against a stub client. Sections
