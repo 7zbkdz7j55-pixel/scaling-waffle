@@ -4,7 +4,7 @@
 # analytics + workspace half — forge.py skips any build whose imports fail.
 
 # --- orchestrator (forge.py) ------------------------------------------------
-anthropic>=0.40
+anthropic>=1.17.0
 
 # --- analytics build (data_analytics_server.py, spawned over stdio) ---------
 # Hard requirement: this server is the migrated v2 file and imports
