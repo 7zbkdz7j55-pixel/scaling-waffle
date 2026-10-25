@@ -27,4 +27,4 @@ numpy>=1.24
 
 # --- coding sub-agent (coding_agent.py) -------------------------------------
 # Also run: npm install -g @anthropic-ai/claude-code
-claude-agent-sdk>=0.2.168
+claude-agent-sdk>=0.2.169
