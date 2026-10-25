@@ -11,6 +11,13 @@ updates:
     labels:
       - dependencies
       - security
+    ignore:
+      # numpy 2.5 needs Python 3.12 or newer. The requirements here still
+      # install on Python 3.11, so a numpy>=2.5 floor would break that install.
+      # Raise the floor by hand when the project moves to Python 3.12.
+      - dependency-name: numpy
+        versions:
+          - ">=2.5"
     groups:
       minor-and-patch:
         applies-to: version-updates
