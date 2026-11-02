@@ -10,7 +10,7 @@ anthropic>=1.17.0
 # Hard requirement: this server is the migrated v2 file and imports
 # mcp.server.mcpserver, which does not exist on mcp 1.x. See MIGRATION.md.
 mcp>=2.3.0
-duckdb>=1.5.6
+duckdb>=2.0.0
 pandas>=3.0.6
 httpx>=0.28.1
 matplotlib>=3.11.2
