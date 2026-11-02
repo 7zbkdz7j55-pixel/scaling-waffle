@@ -11,7 +11,7 @@ anthropic>=1.17.0
 # mcp.server.mcpserver, which does not exist on mcp 1.x. See MIGRATION.md.
 mcp>=2.3.0
 duckdb>=1.5.6
-pandas>=3.0.6
+pandas>=3.1.0
 httpx>=0.28.1
 matplotlib>=3.11.2
 openpyxl>=3.1.5          # only needed for .xlsx/.xls sources
